@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 
 Vue.use(VueRouter);
-// URL charts.assets.kartoteket.as/covid19/embeds/chart/line/taiwan*,norway/combined
+// URL charts.corona.kartoteket.as/embeds/chart/line/taiwan*,norway/combined
 const routes = [
   {
     path: '/',
