@@ -8,9 +8,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "array-flat-polyfill": "^1.0.1",
     "core-js": "^3.6.4",
+    "d3": "^5.15.0",
+    "moment": "^2.24.0",
+    "topojson-client": "^3.1.0",
     "vue": "^2.6.11",
-    "vue-router": "^3.1.5"
+    "vue-router": "^3.1.5",
+    "vue-spinner": "^1.0.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.2.0",
