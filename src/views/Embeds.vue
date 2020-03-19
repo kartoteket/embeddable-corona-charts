@@ -1,5 +1,5 @@
 <template>
-  <article class="flex flex-col">
+  <article class="flex flex-col font-light">
     <div
       v-if="isLoading"
       class="flex justify-center items-center w-full h-screen"
