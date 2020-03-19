@@ -3,12 +3,19 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 
 Vue.use(VueRouter);
-
+//! URL charts.assets.kartoteket.as/covid19/embeds/charts/taiwan*,norway/combined
 const routes = [
   {
     path: "/",
     name: "Home",
     component: Home
+  },
+  {
+    path: "/embeds/chart/:type?/:slug?/:sub?",
+    component: () =>
+      import(
+        /* webpackChunkName: "embeds-charts-type-slug-sub" */ "../views/Embeds.vue"
+      )
   },
   {
     path: "/about",
