@@ -2,21 +2,19 @@
   <svg :id="`chart-${id}`" class="chart" />
 </template>
 <script>
-/* eslint-disable no-unused-vars */
 import * as d3 from 'd3'; // @todo cherrypick like this: var d3 = Object.assign({}, require("d3-format"), require("d3-geo"), require("d3-geo-projection"));
-// import * as d3Array from 'd3-array';
-import * as moment from 'moment';
-import * as topojson from 'topojson-client';
-
 const locale = d3.formatLocale({
   decimal: ',',
   thousands: ' ',
   grouping: [3]
 });
-// const d3 = Object.assign({}, d3Lib, d3Array);
 
 export default {
   props: {
+    yScaleType: {
+      type: String,
+      default: 'linear'
+    },
     series: {
       type: Array,
       required: true
@@ -59,10 +57,26 @@ export default {
       return d3.min([this.width * this.options.aspectRatio, 800]);
     },
     yScale() {
+      return this.yScaleType === 'log' ? this.yScaleLog : this.yScaleLinear;
+    },
+    yScaleLinear() {
       return d3
         .scaleLinear()
         .domain([
           d3.min(this.series, s => d3.min(s.values, v => v.value)),
+          d3.max(this.series, s => d3.max(s.values, v => v.value))
+        ])
+        .range([
+          this.height - this.options.margin.bottom,
+          this.options.margin.top
+        ]);
+    },
+    yScaleLog() {
+      return d3
+        .scaleLog()
+        .base(10)
+        .domain([
+          d3.max([1, d3.min(this.series, s => d3.min(s.values, v => v.value))]),
           d3.max(this.series, s => d3.max(s.values, v => v.value))
         ])
         .range([
@@ -93,7 +107,9 @@ export default {
     changeLine() {
       return d3
         .line()
-        .defined(d => !isNaN(d.value))
+        .defined(d =>
+          this.yScaleType === 'log' ? d.value > 0 : !isNaN(d.value)
+        )
         .x(d => this.xScale(d.date))
         .y(d => this.yScale(d.value))
         .curve(d3.curveCatmullRom);
@@ -102,6 +118,9 @@ export default {
   watch: {
     series(val) {
       this.drawChart(`#chart-${this.id}`, val);
+    },
+    yScaleType() {
+      this.drawChart(`#chart-${this.id}`, this.series);
     }
   },
 
@@ -188,13 +207,13 @@ export default {
       el.yAxis
         .selectAll('.tick')
         .selectAll('line')
-        .style('opacity', 0.25)
+        .style('opacity', this.yScaleType === 'log' ? 0.1 : 0.2)
         .attr('stroke', this.options.textColor);
 
       el.xAxis
         .selectAll('.tick')
         .selectAll('line')
-        .style('opacity', 0.25)
+        .style('opacity', 0.2)
         .attr('stroke', this.options.textColor);
       el.xAxis
         .selectAll('.tick')
@@ -251,6 +270,10 @@ export default {
       const tickWidth =
         (this.width - this.options.margin.right - this.options.margin.left) *
         -1;
+      const tickFormat =
+        this.yScaleType === 'log'
+          ? d => this.yScaleLog.tickFormat(5, d3.format(',d'))(d)
+          : d => this.yScaleLinear.tickFormat(5, locale.format(',d'))(d);
 
       if (this.options.yAxis === 'right') {
         generator = d3.axisRight(y);
@@ -258,8 +281,8 @@ export default {
       }
       return svg.attr('transform', `translate(${position},0)`).call(
         generator
-          // .tickFormat(d3.format('d'))
           .ticks(5)
+          .tickFormat(tickFormat)
           .tickSizeOuter(0)
           .tickSizeInner(tickWidth)
       );
@@ -293,7 +316,7 @@ export default {
             d.date.getTime() > flipDate ? 'end' : 'start'
           )
           .attr('x', d => (d.date.getTime() < flipDate ? '10' : '-10'))
-          .attr('y', (d, i) => `${i * 1.2}em`)
+          .attr('y', (d, i) => `${i * 1.25}em`)
           .style('font-weight', (_, i) => (i ? null : 'bold'))
           .text(function(d, i) {
             if (i < 1) return `${d3.timeFormat('%d. %b')(d.date)}`; // print date on first line
@@ -304,7 +327,7 @@ export default {
       const callout = g
         .style('display', null)
         .style('pointer-events', 'none')
-        .style('font-family', 'Helvetica, Arial, sans serif')
+        .style('font', '0.75rem Helvetica, arial, sans-serif')
         .style('fill', this.options.textColor);
 
       // generate text to get dimensions
@@ -322,7 +345,7 @@ export default {
         .style('stroke-dasharray', '3, 3')
         .attr('class', 'guide')
         .attr('x1', 0)
-        .attr('y1', 0)
+        .attr('y1', h - 5)
         .attr('x2', 0)
         .attr(
           'y2',
@@ -334,11 +357,11 @@ export default {
         .selectAll('rect')
         .data([null])
         .join('rect')
-        .attr('fill', 'white')
-        .attr('fill-opacity', 0.35)
+        .attr('fill', this.options.textColor === '#fff' ? '#2a3b4b' : 'white') // @todo: ad hoc ternary fix
+        .attr('fill-opacity', 0.75)
         .attr('stroke', this.options.textColor)
         .attr('stroke-opacity', 0.25)
-        .attr('rx', 5)
+        .attr('rx', 2)
         .attr('width', w + 20)
         .attr('x', x - 10)
         .attr('y', -15)
