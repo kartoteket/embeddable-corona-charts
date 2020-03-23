@@ -18,6 +18,7 @@
           <multi-line-chart
             :id="`${i}-${j}-${Math.floor(Math.random() * 100)}`"
             :series="chart.data"
+            :y-scale-type="yScaleType"
             :config="{
               colorScale,
               textColor: '#444',
@@ -60,6 +61,7 @@ export default {
     return {
       isLoading: true,
       selection: ['Norway', ''],
+      chartType: 'line',
       sub: 'both',
       input: {},
       inputTotalConfirmed: [],
@@ -106,6 +108,12 @@ export default {
     lastUpdate() {
       const dates = this.inputTotalConfirmed.map(d => d.date);
       return d3.timeFormat('%d. %b')(dates[dates.length - 1]);
+    },
+    yScaleType() {
+      if (this.chartType === 'logline') {
+        return 'log';
+      }
+      return 'linear';
     }
   },
   async mounted() {
@@ -118,11 +126,18 @@ export default {
         return output;
       });
 
-      // nb: here we can also reate cusmtom selctions like fx 'nordic'
+      // nb: here we can also create custom selections like fx 'nordic'
       if (Array.isArray(selection)) {
         this.selection = selection;
       }
     }
+
+    // get chart type. Currently just line and logline
+    if (this.$route.params.type) {
+      this.chartType = this.$route.params.type;
+    }
+
+    // console.log('this.$route.params', this.$route.params);
     if (this.$route.params.sub) {
       this.sub = this.$route.params.sub;
     }
