@@ -11,7 +11,7 @@ const routes = [
     component: Home
   },
   {
-    path: '/embeds/chart/:type?/:slug?/:sub?',
+    path: '/embeds/chart/:type?/:slug?/:sub?/:dimension?',
     component: () =>
       import(
         /* webpackChunkName: "embeds-charts-type-slug-sub" */ '../views/Embeds.vue'
