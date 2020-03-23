@@ -63,11 +63,11 @@ export default {
       selection: ['Norway', ''],
       chartType: 'line',
       sub: 'both',
+      dimension: 'cases',
+      dimensions: ['cases', 'deaths', 'recovered'],
       input: {},
-      inputTotalConfirmed: [],
-      inputNewConfirmed: [],
-      inputTotalDeaths: [],
-      inputNewDeaths: [],
+      inputTotal: [],
+      inputNew: [],
       margin: {
         right: 20,
         left: 50,
@@ -84,11 +84,11 @@ export default {
         ],
         johnshopkins: [
           'https://storage.googleapis.com/kartoteket/covid19/data/johnshopkins/total_cases_by_country.csv',
-          'https://storage.googleapis.com/kartoteket/covid19/data/johnshopkins/new_cases_by_country.csv'
-          // 'https://storage.googleapis.com/kartoteket/covid19/data/johnshopkins/total_deaths_by_country.csv',
-          // 'https://storage.googleapis.com/kartoteket/covid19/data/johnshopkins/new_deaths_by_country.csv',
-          // 'https://storage.googleapis.com/kartoteket/covid19/data/johnshopkins/total_recovered_by_country.csv',
-          // 'https://storage.googleapis.com/kartoteket/covid19/data/johnshopkins/new_recovered_by_country.csv'
+          'https://storage.googleapis.com/kartoteket/covid19/data/johnshopkins/new_cases_by_country.csv',
+          'https://storage.googleapis.com/kartoteket/covid19/data/johnshopkins/total_deaths_by_country.csv',
+          'https://storage.googleapis.com/kartoteket/covid19/data/johnshopkins/new_deaths_by_country.csv',
+          'https://storage.googleapis.com/kartoteket/covid19/data/johnshopkins/total_recovered_by_country.csv',
+          'https://storage.googleapis.com/kartoteket/covid19/data/johnshopkins/new_recovered_by_country.csv'
         ]
       }
     };
@@ -106,7 +106,7 @@ export default {
       ];
     },
     lastUpdate() {
-      const dates = this.inputTotalConfirmed.map(d => d.date);
+      const dates = this.inputTotal.map(d => d.date);
       return d3.timeFormat('%d. %b')(dates[dates.length - 1]);
     },
     yScaleType() {
@@ -114,6 +114,14 @@ export default {
         return 'log';
       }
       return 'linear';
+    },
+    dimensionLabel() {
+      const labels = {
+        cases: 'tilfeller',
+        deaths: 'døde',
+        recovered: 'friskmeldte'
+      };
+      return labels[this.dimension];
     }
   },
   async mounted() {
@@ -137,18 +145,26 @@ export default {
       this.chartType = this.$route.params.type;
     }
 
-    // console.log('this.$route.params', this.$route.params);
+    // which subset to fetch ( new or total or combined)
+    if (
+      this.$route.params.dimension &&
+      this.dimensions.includes(this.$route.params.dimension)
+    ) {
+      this.dimension = this.$route.params.dimension;
+    }
+    // which subset to fetch ( new or total or combined)
     if (this.$route.params.sub) {
       this.sub = this.$route.params.sub;
     }
-
-    // Fetc data based on sub criteria
+    // Fetc data based on subset criteria
     if (this.sub !== 'new' || this.sub === 'combined') {
-      this.inputTotalConfirmed = await this.fetchData('totalCases');
+      this.inputTotal = await this.fetchData('total');
     }
     if (this.sub !== 'total' || this.sub === 'combined') {
-      this.inputNewConfirmed = await this.fetchData('newCases');
+      this.inputNew = await this.fetchData('new');
     }
+
+    console.log('this.$route.params', this.$route.params);
 
     // done laoding
     this.isLoading = false;
@@ -175,9 +191,7 @@ export default {
       }
 
       // select totals or new cases
-      const input = newCases
-        ? this.inputNewConfirmed
-        : this.inputTotalConfirmed;
+      const input = newCases ? this.inputNew : this.inputTotal;
 
       // filter data by selection and find first date with cases
       const firstCase = [];
@@ -207,9 +221,7 @@ export default {
       return output;
     },
     getWorldConfirmed({ includeChina = true, newCases = false } = {}) {
-      const input = newCases
-        ? this.inputNewConfirmed
-        : this.inputTotalConfirmed;
+      const input = newCases ? this.inputNew : this.inputTotal;
 
       const values = input.map(d => {
         return {
@@ -239,13 +251,13 @@ export default {
             this.getConfirmedCases(countries, { newCases: true }).map(d => {
               d.name =
                 countries.length > 1
-                  ? `${d.name}, nye tilfeller`
-                  : `Nye tilfeller, ${d.name}`;
+                  ? `${d.name}, nye ${this.dimensionLabel}`
+                  : `Nye ${this.dimensionLabel}, ${d.name}`;
               return d;
             })
           );
         charts.push({
-          title: 'Antall bekreftede tilfeller',
+          title: `Antall bekreftede ${this.dimensionLabel}`,
           data: combo
         });
         return {
@@ -256,14 +268,14 @@ export default {
 
       if (this.sub !== 'new') {
         const total = {
-          title: 'Totalt antall bekreftede tilfeller',
+          title: `Totalt antall bekreftede ${this.dimensionLabel}`,
           data: this.getConfirmedCases(countries)
         };
         charts.push(total);
       }
       if (this.sub !== 'total') {
         const daily = {
-          title: 'Bekreftede nye tilfeller',
+          title: `Bekreftede nye ${this.dimensionLabel} per dag`,
           data: this.getConfirmedCases(countries, { newCases: true })
         };
         charts.push(daily);
@@ -301,9 +313,18 @@ export default {
       }
       return newObj;
     },
-    async fetchData(dataset) {
+    async fetchData(_dataset) {
       // list of possible datasets. Used for mappping
-      const datasets = ['totalCases', 'newCases', 'totalDeaths', 'newDeaths'];
+      const dataset = `${_dataset}-${this.dimension}`; // (eg "total-deaths")
+      // list of possible datasets. Used for mappping
+      const datasets = [
+        'total-cases',
+        'new-cases',
+        'total-deaths',
+        'new-deaths',
+        'total-recovered',
+        'new-recovered'
+      ];
       const source = this.source;
 
       // store loaded dataets on instance. Only fetch first time
@@ -331,7 +352,7 @@ export default {
       }
 
       return dataset === 'all'
-        ? this.input[this.source]
+        ? this.input
         : this.input[`${source}-${dataset}`];
     }
   }
