@@ -165,8 +165,6 @@ export default {
       this.inputNew = await this.fetchData('new');
     }
 
-    console.log('this.$route.params', this.$route.params);
-
     // done laoding
     this.isLoading = false;
   },
