@@ -32,14 +32,26 @@
     <p v-if="!isLoading" class="text-xs text-right pr-4">
       Kilde:
       <a
+        v-if="source === 'johnshopkins'"
         class="underline"
         target="_parent"
         href="https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6"
-        >Johns Hopkins CSSE</a
-      >. Grafikk:
-      <a class="underline" target="_parent" href="https://kartoteket.as"
-        >Kartoteket</a
-      >. Oppdatert {{ lastUpdate }}.
+      >
+        Johns Hopkins CSSE
+      </a>
+      <a
+        v-if="source === 'owid'"
+        class="underline"
+        target="_parent"
+        href="https://ourworldindata.org/coronavirus-source-data"
+      >
+        European Centre for Disease Prevention and Control via Our World in Data
+      </a>
+      . Grafikk:
+      <a class="underline" target="_parent" href="https://kartoteket.as">
+        Kartoteket
+      </a>
+      . Oppdatert {{ lastUpdate }}.
     </p>
   </article>
 </template>
@@ -74,7 +86,7 @@ export default {
         top: 20,
         bottom: 20
       },
-      source: 'johnshopkins', // 'johnshopkins',
+      source: 'owid', // 'johnshopkins',
       files: {
         owid: [
           'https://covid.ourworldindata.org/data/ecdc/total_cases.csv',
