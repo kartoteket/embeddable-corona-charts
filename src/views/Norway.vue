@@ -220,7 +220,7 @@ export default {
         total: 'Registrert smittet (totalt)',
         new: 'Registrert smittet (nye)',
         hospital: 'Innlagt ',
-        icu: 'På intensivenhet',
+        icu: 'Intensivpost',
         deaths: 'Døde',
         tested: 'Testet (totalt)',
         mean_age: 'Gjennomsnittsalder (innlagte)',
