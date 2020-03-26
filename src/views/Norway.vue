@@ -207,7 +207,7 @@ export default {
         config: {
           colorScale: this.colorScale,
           textColor: '#444',
-          aspectRatio: 0.6,
+          aspectRatio: 0.5,
           yAxis: 'right',
           curve: d3.curveLinear,
           margin: this.margin
