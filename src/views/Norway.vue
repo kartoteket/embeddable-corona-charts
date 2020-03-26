@@ -209,6 +209,7 @@ export default {
           textColor: '#444',
           aspectRatio: 0.6,
           yAxis: 'right',
+          curve: d3.curveLinear,
           margin: this.margin
           // domain: { y: [0, 440] }
         }
