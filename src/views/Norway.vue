@@ -118,7 +118,7 @@ export default {
       isLoading: true,
       input: [],
       scenarios,
-      dimensions: '',
+      dimensions: ['total'],
       alllowedDimensions: [
         'total',
         'new',
