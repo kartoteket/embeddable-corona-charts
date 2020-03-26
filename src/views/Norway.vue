@@ -52,12 +52,12 @@
 import * as d3 from 'd3'; // @todo cherrypick like this: var d3 = Object.assign({}, require("d3-format"), require("d3-geo"), require("d3-geo-projection"));
 
 import ScaleLoader from 'vue-spinner/src/PulseLoader.vue';
-import NorwayChart from '@/components/charts/NorwayChart';
+import MultiLineChart from '@/components/charts/MultiLineChart';
 
 export default {
   layout: 'embed',
   components: {
-    MultiLineChart: NorwayChart,
+    MultiLineChart: MultiLineChart,
     ScaleLoader
   },
   data() {
