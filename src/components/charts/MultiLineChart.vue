@@ -37,11 +37,20 @@ export default {
         colorScale: d3.scaleOrdinal(d3.schemeSet2),
         textColor: '#fff',
         yAxis: 'left',
+        curve: d3.curveCatmullRom,
         margin: {
           right: 30,
           left: 50,
           top: 20,
           bottom: 20
+        },
+        domain: {
+          x: d3.extent(this.series[0].values, d => d.date),
+          y: [
+            0,
+            // d3.min(this.series, s => d3.min(s.values, v => v.value)),
+            d3.max(this.series, s => d3.max(s.values, v => v.value))
+          ]
         }
       }
     };
@@ -62,10 +71,7 @@ export default {
     yScaleLinear() {
       return d3
         .scaleLinear()
-        .domain([
-          d3.min(this.series, s => d3.min(s.values, v => v.value)),
-          d3.max(this.series, s => d3.max(s.values, v => v.value))
-        ])
+        .domain(this.options.domain.y)
         .range([
           this.height - this.options.margin.bottom,
           this.options.margin.top
@@ -88,11 +94,7 @@ export default {
       return (
         d3
           .scaleTime()
-          .domain(
-            d3.extent(this.series[0].values, d => {
-              return d.date;
-            })
-          )
+          .domain(this.options.domain.x)
           // @todo should get min/max of all sets of values
           .range([
             this.options.margin.left,
@@ -112,7 +114,7 @@ export default {
         )
         .x(d => this.xScale(d.date))
         .y(d => this.yScale(d.value))
-        .curve(d3.curveCatmullRom);
+        .curve(this.options.curve);
     }
   },
   watch: {
@@ -156,9 +158,8 @@ export default {
       const legends = el.legend
         .attr(
           'transform',
-          `translate(${this.options.margin.left + 10}, ${this.height -
-            this.options.margin.bottom -
-            20})`
+          `translate(${this.options.margin.left + 10}, ${this.options.margin
+            .top + 50})`
         )
         .selectAll('g')
         .data(

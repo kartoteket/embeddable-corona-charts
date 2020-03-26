@@ -15,10 +15,6 @@ export default {
       type: String,
       default: 'linear'
     },
-    scenarios: {
-      type: Object,
-      required: true
-    },
     series: {
       type: Array,
       required: true
@@ -41,13 +37,21 @@ export default {
         colorScale: d3.scaleOrdinal(d3.schemeSet2),
         textColor: '#fff',
         yAxis: 'left',
+        curve: d3.curveCatmullRom,
         margin: {
           right: 30,
           left: 50,
           top: 20,
           bottom: 20
         },
-        domain: {}
+        domain: {
+          x: d3.extent(this.series[0].values, d => d.date),
+          y: [
+            0,
+            // d3.min(this.series, s => d3.min(s.values, v => v.value)),
+            d3.max(this.series, s => d3.max(s.values, v => v.value))
+          ]
+        }
       }
     };
   },
@@ -67,15 +71,7 @@ export default {
     yScaleLinear() {
       return d3
         .scaleLinear()
-        .domain(
-          this.options.domain.y
-            ? this.options.domain.y
-            : [
-                0,
-                // d3.min(this.series, s => d3.min(s.values, v => v.value)),
-                d3.max(this.series, s => d3.max(s.values, v => v.value))
-              ]
-        )
+        .domain(this.options.domain.y)
         .range([
           this.height - this.options.margin.bottom,
           this.options.margin.top
@@ -95,18 +91,10 @@ export default {
         ]);
     },
     xScale() {
-      // const startDate = new Date('2020-03-12');
-      // const endDate = new Date('2020-04-15');
       return (
         d3
           .scaleTime()
-          .domain(
-            this.options.domain.x
-              ? this.options.domain.x
-              : d3.extent(this.series[0].values, d => {
-                  return d.date;
-                })
-          )
+          .domain(this.options.domain.x)
           // @todo should get min/max of all sets of values
           .range([
             this.options.margin.left,
@@ -125,7 +113,8 @@ export default {
           this.yScaleType === 'log' ? d.value > 0 : !isNaN(d.value)
         )
         .x(d => this.xScale(d.date))
-        .y(d => this.yScale(d.value));
+        .y(d => this.yScale(d.value))
+        .curve(this.options.curve);
     }
   },
   watch: {
@@ -174,7 +163,6 @@ export default {
         )
         .selectAll('g')
         .data(
-          // series
           series.sort((a, b) =>
             d3.ascending(
               a.values[a.values.length - 1].value,
