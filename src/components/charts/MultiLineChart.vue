@@ -233,10 +233,13 @@ export default {
       // tooltip
       svg.on('touchmove mousemove', function() {
         const values = that.bisect(d3.mouse(this)[0]);
+        const yPos = d3.mouse(this)[1];
         if (values[0]) {
           el.tooltip
-            .attr('transform', `translate(${that.xScale(values[0].date)},25)`) // ${yTemp(values[0].value) - 125
-            .call(that.callout, values);
+            .attr('transform', `translate(${that.xScale(values[0].date)},0)`)
+            // ${that.yScale(values[0].value) - 50}
+            // ${yTemp(values[0].value) - 125
+            .call(that.callout, values, yPos);
         }
       });
       svg.on('touchend mouseleave', () => el.tooltip.call(that.callout, null));
@@ -287,7 +290,7 @@ export default {
           .tickSizeInner(tickWidth)
       );
     },
-    callout(g, values) {
+    callout(g, values, yPos) {
       if (!values) return g.style('display', 'none');
 
       // get a date x days back in tome
@@ -313,10 +316,12 @@ export default {
           .data(values)
           .join('tspan')
           .attr('text-anchor', d =>
-            d.date.getTime() > flipDate ? 'end' : 'start'
+            d.date.getTime() > flipDate ? 'middle' : 'start'
           )
-          .attr('x', d => (d.date.getTime() < flipDate ? '10' : '-10'))
+          // .attr('x', 10)
+          .attr('x', d => (d.date.getTime() < flipDate ? '10' : '-30'))
           .attr('y', (d, i) => `${i * 1.25}em`)
+          .style('text-align', 'left')
           .style('font-weight', (_, i) => (i ? null : 'bold'))
           .text(function(d, i) {
             if (i < 1) return `${d3.timeFormat('%d. %b')(d.date)}`; // print date on first line
@@ -334,6 +339,9 @@ export default {
       const text = callout.append('text').call(text => echoTooltip(text));
       const { x, y, width: w, height: h } = text.node().getBBox();
 
+      // calucuale textpos position
+      const position = yPos > this.height - h ? yPos - h : yPos + 20;
+
       // tooltip guide-line
       callout
         .selectAll('line')
@@ -342,15 +350,12 @@ export default {
         .attr('stroke', this.options.textColor)
         .style('stroke-opacity', 0.5)
         .attr('stroke-width', 1)
-        .style('stroke-dasharray', '3, 3')
+        // .style('stroke-dasharray', '3, 3')
         .attr('class', 'guide')
         .attr('x1', 0)
-        .attr('y1', h - 5)
+        .attr('y1', this.options.margin.bottom)
         .attr('x2', 0)
-        .attr(
-          'y2',
-          this.height - this.options.margin.bottom - this.options.margin.top - 4
-        );
+        .attr('y2', this.height - this.options.margin.bottom);
 
       // tooltip bg box
       callout
@@ -362,6 +367,7 @@ export default {
         .attr('stroke', this.options.textColor)
         .attr('stroke-opacity', 0.25)
         .attr('rx', 2)
+        .attr('transform', `translate(0,${position})`)
         .attr('width', w + 20)
         .attr('x', x - 10)
         .attr('y', -15)
@@ -369,7 +375,10 @@ export default {
 
       // re-append text on top og bg box
       callout.selectAll('text').remove();
-      callout.append('text').call(text => echoTooltip(text));
+      callout
+        .append('text')
+        .attr('transform', `translate(0,${position})`)
+        .call(text => echoTooltip(text));
 
       // position
       text.attr('transform', `translate(0,${-10 - y})`);
