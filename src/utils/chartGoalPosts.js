@@ -11,7 +11,7 @@ const strategyLables = {
   supress: '«Undertrykk»'
 };
 
-const colorScale = d3.scaleOrdinal(d3.schemeSet2); // d3.schemeTableau10
+const colorScale = d3.scaleOrdinal(['#E31A1C', '#1F78B4', '#33A02C']); // d3.schemeTableau10
 
 const generate = (g, dimension, yScale, color) => {
   g.append('line')
