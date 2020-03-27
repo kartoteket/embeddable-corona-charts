@@ -215,6 +215,7 @@ export default {
 
       const output = dimensions.map((line, i) => {
         return {
+          id: line,
           name: this.printLabel(line),
           values: values[i].filter(
             d => d.date > cutoff.setDate(cutoff.getDate() - 1)
