@@ -165,17 +165,64 @@ export default {
       if (this.extras.id === 'scenarios' && goalPosts) {
         const dimension = this.series[0].id; // for now always only only one line
         const strategies = ['nothing', 'contain', 'supress'];
-        el.goalposts = el.g.append('g').classed('goalpoasts', true);
 
+        el.goalposts = el.g.append('g').classed('goalpoasts', true);
         el.goalpostsLegend = el.g
           .append('g')
           .classed('goalpoasts-legend', true)
           .attr(
             'transform',
-            `translate(${this.width - 70},${this.options.margin.top})`
+            `translate(${this.width - 75},${this.options.margin.top})`
           )
           .call(goalPosts.legend, strategies, '#444');
 
+        if (dimension === 'icu') {
+          // @todo: move to external file
+          el.thresholds = el.g.append('g').classed('ice-thresholds', true);
+          el.thresholds
+            .append('line')
+            .attr('stroke', '#000')
+            .style('stroke-opacity', 1)
+            .attr('stroke-width', 1)
+            .attr('stroke-dasharray', '4 4')
+            .attr('class', 'goalposts')
+            .attr('x1', 125)
+            .attr('y1', this.yScale(289))
+            .attr('x2', this.width - this.options.margin.right)
+            .attr('y2', this.yScale(289));
+
+          el.thresholds
+            .append('text')
+            .style('font-family', 'Helvetica, Arial, sans serif')
+            .style('font-size', '9px')
+            .style('fill', '#000')
+            .attr('x', 6)
+            .attr('dy', 2)
+            .attr('y', this.yScale(289))
+            .text('289 etablerte intensivplasser');
+
+          el.thresholds
+            .append('line')
+            .attr('stroke', '#000')
+            .style('stroke-opacity', 1)
+            .attr('stroke-width', 1)
+            .attr('stroke-dasharray', '4 4')
+            .attr('class', 'goalposts')
+            .attr('x1', 175)
+            .attr('y1', this.yScale(925))
+            .attr('x2', this.width - this.options.margin.right)
+            .attr('y2', this.yScale(925));
+
+          el.thresholds
+            .append('text')
+            .style('font-family', 'Helvetica, Arial, sans serif')
+            .style('font-size', '9px')
+            .style('fill', '#000')
+            .attr('x', 6)
+            .attr('dy', 2)
+            .attr('y', this.yScale(925))
+            .text('925 er maks antall mulige intensivplasser');
+        }
         strategies.forEach(strategy => {
           const data = this.extras.data.filter(d => d.strategy === strategy);
           el.goalposts
@@ -248,13 +295,13 @@ export default {
       el.yAxis
         .selectAll('.tick')
         .selectAll('line')
-        .style('opacity', this.yScaleType === 'log' ? 0.1 : 0.2)
+        .style('opacity', this.yScaleType === 'log' ? 0.1 : 0.15)
         .attr('stroke', this.options.textColor);
 
       el.xAxis
         .selectAll('.tick')
         .selectAll('line')
-        .style('opacity', 0.2)
+        .style('opacity', 0.15)
         .attr('stroke', this.options.textColor);
       el.xAxis
         .selectAll('.tick')
