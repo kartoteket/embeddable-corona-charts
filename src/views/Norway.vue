@@ -10,7 +10,7 @@
       <article v-if="chart" class="mb-4">
         <h2
           v-if="chart.title"
-          class="text-sm uppercase text-sm tracking-wide text-gray-800 border-b-2 border-gray-500 mt-4"
+          class="text-sm uppercase text-sm tracking-wide text-gray-800 border-b-2 border-gray-500 mt-4 pl-4"
         >
           {{ chart.title }}
         </h2>
@@ -23,7 +23,7 @@
         />
       </article>
     </div>
-    <p v-if="!isLoading" class="text-xs text-right pr-4">
+    <p v-if="!isLoading" class="text-xs ml-4">
       Kilde:
       <a
         class="underline"
@@ -136,8 +136,8 @@ export default {
         'female',
         'male'
       ]
-      };
-    },
+    };
+  },
   computed: {
     margin() {
       return {
