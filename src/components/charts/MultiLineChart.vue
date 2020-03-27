@@ -162,7 +162,7 @@ export default {
       el.yAxis.call(this.yAxis, this.yScale);
 
       //  INSERT TARGET GOALPOSTS START
-      if (goalPosts.generate) {
+      if (this.extras.id === 'scenarios' && goalPosts) {
         const dimension = this.series[0].id; // for now always only only one line
         const strategies = ['nothing', 'contain', 'supress'];
         el.goalposts = el.g.append('g').classed('goalpoasts', true);

@@ -17,7 +17,7 @@
         <multi-line-chart
           id="fhi_scenario_chart"
           :series="chart.data"
-          :extras="{ id: 'scenarios', data: scenarios }"
+          :extras="extras"
           :y-scale-type="yScaleType"
           :config="chart.config"
         />
@@ -139,6 +139,12 @@ export default {
     };
   },
   computed: {
+    extras() {
+      if (this.feature === 'scenarios') {
+        return { id: 'scenarios', data: this.scenarios };
+      }
+      return {};
+    },
     margin() {
       return {
         right: this.feature === 'scenarios' ? 120 : 50,
