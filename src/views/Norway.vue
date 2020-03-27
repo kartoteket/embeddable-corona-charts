@@ -150,7 +150,7 @@ export default {
     xDomain() {
       if (this.feature === 'scenarios') {
         // if showing icu in scenario-mode, lock X axis domain to set date range
-        if (this.dimensions[0] === 'icu')
+        if (this.dimensions[0] === 'icu' || this.dimensions[0] === 'hospital')
           return [new Date('2020-03-12'), new Date('2020-04-20')];
       }
       return null;
@@ -159,6 +159,7 @@ export default {
       if (this.feature === 'scenarios') {
         // if showing icu in scenario-mode, lock Y axis domain to set value range
         if (this.dimensions[0] === 'icu') return [0, 500];
+        if (this.dimensions[0] === 'hospital') return [0, 3500];
       }
       return null;
     },
