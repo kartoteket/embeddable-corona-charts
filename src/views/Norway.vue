@@ -97,7 +97,7 @@ export default {
       {
         strategy: 'contain',
         date: new Date('2020-04-11'),
-        hospital: { mean: 510, min: 920, max: 1250 },
+        hospital: { mean: 510, min: 420, max: 610 },
         icu: { mean: 120, min: 95, max: 145 }
       },
       {
