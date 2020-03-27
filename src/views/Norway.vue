@@ -75,55 +75,64 @@ export default {
         strategy: 'nothing',
         date: new Date('2020-03-28'),
         hospital: { mean: 430, min: 360, max: 500 },
-        icu: { mean: 60, min: 45, max: 80 }
+        icu: { mean: 60, min: 45, max: 80 },
+        total: { mean: 17000, min: 15000, max: 19000 }
       },
       {
         strategy: 'nothing',
         date: new Date('2020-04-04'),
         hospital: { mean: 1070, min: 920, max: 1250 },
-        icu: { mean: 150, min: 110, max: 180 }
+        icu: { mean: 150, min: 110, max: 180 },
+        total: { mean: 42000, min: 36000, max: 47000 }
       },
       {
         strategy: 'nothing',
         date: new Date('2020-04-11'),
         hospital: { mean: 2700, min: 2340, max: 3060 },
-        icu: { mean: 380, min: 320, max: 440 }
+        icu: { mean: 380, min: 320, max: 440 },
+        total: { mean: 101000, min: 89000, max: 112000 }
       },
       {
         strategy: 'contain',
         date: new Date('2020-03-28'),
         hospital: { mean: 280, min: 230, max: 340 },
-        icu: { mean: 55, min: 40, max: 70 }
+        icu: { mean: 55, min: 40, max: 70 },
+        total: { mean: 4700, min: 4100, max: 5500 }
       },
       {
         strategy: 'contain',
         date: new Date('2020-04-04'),
         hospital: { mean: 390, min: 320, max: 460 },
-        icu: { mean: 90, min: 65, max: 110 }
+        icu: { mean: 90, min: 65, max: 110 },
+        total: { mean: 6000, min: 5200, max: 7000 }
       },
       {
         strategy: 'contain',
         date: new Date('2020-04-11'),
         hospital: { mean: 510, min: 420, max: 610 },
-        icu: { mean: 120, min: 95, max: 145 }
+        icu: { mean: 120, min: 95, max: 145 },
+        total: { mean: 7600, min: 6500, max: 9000 }
       },
       {
         strategy: 'supress',
         date: new Date('2020-03-28'),
         hospital: { mean: 240, min: 200, max: 280 },
-        icu: { mean: 50, min: 35, max: 65 }
+        icu: { mean: 50, min: 35, max: 65 },
+        total: { mean: 2500, min: 2100, max: 2700 }
       },
       {
         strategy: 'supress',
         date: new Date('2020-04-04'),
         hospital: { mean: 245, min: 190, max: 300 },
-        icu: { mean: 70, min: 50, max: 90 }
+        icu: { mean: 70, min: 50, max: 90 },
+        total: { mean: 2200, min: 1900, max: 2500 }
       },
       {
         strategy: 'supress',
         date: new Date('2020-04-11'),
         hospital: { mean: 225, min: 170, max: 270 },
-        icu: { mean: 70, min: 50, max: 85 }
+        icu: { mean: 70, min: 50, max: 85 },
+        total: { mean: 2000, min: 1700, max: 2200 }
       }
     ];
     return {
@@ -163,7 +172,11 @@ export default {
     xDomain() {
       if (this.feature === 'scenarios') {
         // if showing icu in scenario-mode, lock X axis domain to set date range
-        if (this.dimensions[0] === 'icu' || this.dimensions[0] === 'hospital')
+        if (
+          this.dimensions[0] === 'icu' ||
+          this.dimensions[0] === 'hospital' ||
+          this.dimensions[0] === 'total'
+        )
           return [new Date('2020-03-12'), new Date('2020-04-20')];
       }
       return null;
@@ -173,6 +186,7 @@ export default {
         // if showing icu in scenario-mode, lock Y axis domain to set value range
         if (this.dimensions[0] === 'icu') return [0, 500];
         if (this.dimensions[0] === 'hospital') return [0, 3500];
+        if (this.dimensions[0] === 'total') return [0, 112000];
       }
       return null;
     },
