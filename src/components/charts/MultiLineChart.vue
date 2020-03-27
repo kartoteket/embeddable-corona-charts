@@ -163,6 +163,7 @@ export default {
 
       //  INSERT TARGET GOALPOSTS START
       if (goalPosts.generate) {
+        const dimension = this.series[0].id; // for now always only only one line
         const strategies = ['nothing', 'contain', 'supress'];
         el.goalposts = el.g.append('g').classed('goalpoasts', true);
 
@@ -175,8 +176,7 @@ export default {
             .attr('transform', d => `translate(${this.xScale(d.date)},0)`)
             .call(
               goalPosts.generate,
-              data,
-              this.xScale,
+              dimension,
               this.yScale,
               goalPosts.colorScale(strategy)
             );

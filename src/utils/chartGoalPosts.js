@@ -7,34 +7,34 @@ const d3 = {
 
 const colorScale = d3.scaleOrdinal(d3.schemeSet2); // d3.schemeTableau10
 
-const generate = (g, data, xScale, yScale, color) => {
+const generate = (g, dimension, yScale, color) => {
   g.append('line')
     .attr('stroke', color)
     .style('stroke-opacity', 1)
     .attr('stroke-width', 1)
     .attr('class', 'goalposts')
     .attr('x1', 0)
-    .attr('y1', d => yScale(d.icu.max))
+    .attr('y1', d => yScale(d[dimension].max))
     .attr('x2', 0)
-    .attr('y2', d => yScale(d.icu.min));
+    .attr('y2', d => yScale(d[dimension].min));
   g.append('line')
     .attr('stroke', color)
     .style('stroke-opacity', 1)
     .attr('stroke-width', 1)
     .attr('class', 'goalposts')
     .attr('x1', -5)
-    .attr('y1', d => yScale(d.icu.max))
+    .attr('y1', d => yScale(d[dimension].max))
     .attr('x2', 5)
-    .attr('y2', d => yScale(d.icu.max));
+    .attr('y2', d => yScale(d[dimension].max));
   g.append('line')
     .attr('stroke', color)
     .style('stroke-opacity', 1)
     .attr('stroke-width', 1)
     .attr('class', 'goalposts')
     .attr('x1', -5)
-    .attr('y1', d => yScale(d.icu.min))
+    .attr('y1', d => yScale(d[dimension].min))
     .attr('x2', 5)
-    .attr('y2', d => yScale(d.icu.min));
+    .attr('y2', d => yScale(d[dimension].min));
   g.append('circle')
     .attr('stroke', color)
     .attr('fill', color)
@@ -42,7 +42,7 @@ const generate = (g, data, xScale, yScale, color) => {
     .attr('stroke-width', 1)
     .attr('class', 'goalposts')
     .attr('r', 2)
-    .attr('cy', d => yScale(d.icu.mean));
+    .attr('cy', d => yScale(d[dimension].mean));
 };
 
 export { generate, colorScale };
