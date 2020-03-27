@@ -167,6 +167,15 @@ export default {
         const strategies = ['nothing', 'contain', 'supress'];
         el.goalposts = el.g.append('g').classed('goalpoasts', true);
 
+        el.goalpostsLegend = el.g
+          .append('g')
+          .classed('goalpoasts-legend', true)
+          .attr(
+            'transform',
+            `translate(${this.width - 70},${this.options.margin.top})`
+          )
+          .call(goalPosts.legend, strategies, '#444');
+
         strategies.forEach(strategy => {
           const data = this.extras.data.filter(d => d.strategy === strategy);
           el.goalposts

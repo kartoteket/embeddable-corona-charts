@@ -135,16 +135,18 @@ export default {
         'mean_age',
         'female',
         'male'
-      ],
-      margin: {
-        right: 50,
-        left: 10,
-        top: 20,
-        bottom: 20
-      }
+      ]
     };
   },
   computed: {
+    margin() {
+      return {
+        right: this.feature === 'scenarios' ? 120 : 50,
+        left: 10,
+        top: 20,
+        bottom: 20
+      };
+    },
     xDomain() {
       if (this.feature === 'scenarios') {
         // if showing icu in scenario-mode, lock X axis domain to set date range
