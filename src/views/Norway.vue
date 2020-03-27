@@ -136,8 +136,8 @@ export default {
         'female',
         'male'
       ]
-    };
-  },
+      };
+    },
   computed: {
     margin() {
       return {
@@ -254,7 +254,7 @@ export default {
         total: 'Registrert smittet (totalt)',
         new: 'Registrert smittet (nye)',
         hospital: 'Innlagt ',
-        icu: 'På intensivpost',
+        icu: 'Under intensivbehandling',
         deaths: 'Døde',
         tested: 'Testet (totalt)',
         mean_age: 'Gjennomsnittsalder (innlagte)',
