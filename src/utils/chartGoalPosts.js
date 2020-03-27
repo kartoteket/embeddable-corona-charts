@@ -1,9 +1,5 @@
 import { scaleOrdinal } from 'd3-scale';
-import { schemeSet2 } from 'd3-scale-chromatic';
-const d3 = {
-  scaleOrdinal,
-  schemeSet2
-};
+const d3 = { scaleOrdinal };
 
 const strategyLables = {
   nothing: '«Slipp»',
@@ -11,7 +7,7 @@ const strategyLables = {
   supress: '«Undertrykk»'
 };
 
-const colorScale = d3.scaleOrdinal(['#E31A1C', '#1F78B4', '#33A02C']); // d3.schemeTableau10
+const colorScale = d3.scaleOrdinal(['#E31A1C', '#1F78B4', '#33A02C']);
 
 const generate = (g, dimension, yScale, color) => {
   g.append('line')
