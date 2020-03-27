@@ -9,6 +9,10 @@ const locale = d3.formatLocale({
   grouping: [3]
 });
 
+// extras
+// @todo move into instace scope
+let goalPosts = null;
+
 export default {
   props: {
     yScaleType: {
@@ -24,6 +28,10 @@ export default {
       default: '1'
     },
     config: {
+      type: Object,
+      default: () => {}
+    },
+    extras: {
       type: Object,
       default: () => {}
     }
@@ -44,14 +52,12 @@ export default {
           top: 20,
           bottom: 20
         },
-        domain: {
-          x: d3.extent(this.series[0].values, d => d.date),
-          y: [
-            0,
-            // d3.min(this.series, s => d3.min(s.values, v => v.value)),
-            d3.max(this.series, s => d3.max(s.values, v => v.value))
-          ]
-        }
+        domainX: d3.extent(this.series[0].values, d => d.date),
+        domainY: [
+          0,
+          // d3.min(this.series, s => d3.min(s.values, v => v.value)),
+          d3.max(this.series, s => d3.max(s.values, v => v.value))
+        ]
       }
     };
   },
@@ -71,7 +77,7 @@ export default {
     yScaleLinear() {
       return d3
         .scaleLinear()
-        .domain(this.options.domain.y)
+        .domain(this.options.domainY)
         .range([
           this.height - this.options.margin.bottom,
           this.options.margin.top
@@ -91,16 +97,13 @@ export default {
         ]);
     },
     xScale() {
-      return (
-        d3
-          .scaleTime()
-          .domain(this.options.domain.x)
-          // @todo should get min/max of all sets of values
-          .range([
-            this.options.margin.left,
-            this.width - this.options.margin.right
-          ])
-      );
+      return d3
+        .scaleTime()
+        .domain(this.options.domainX)
+        .range([
+          this.options.margin.left,
+          this.width - this.options.margin.right
+        ]);
     },
     color() {
       return this.options.colorScale;
@@ -127,6 +130,11 @@ export default {
   },
 
   mounted() {
+    // if in scenarios-mode, load goalPosts-utils
+    if (this.extras.id === 'scenarios') {
+      goalPosts = require('@/utils/chartGoalPosts.js');
+    }
+
     this.drawChart(`#chart-${this.id}`, this.series);
   },
   methods: {
@@ -152,6 +160,38 @@ export default {
       el.xAxis.call(this.xAxis, this.xScale);
       // add y axis
       el.yAxis.call(this.yAxis, this.yScale);
+
+      //  INSERT TARGET GOALPOSTS START
+      if (this.extras.id === 'scenarios' && goalPosts) {
+        const dimension = this.series[0].id; // for now always only only one line
+        const strategies = ['nothing', 'contain', 'supress'];
+        el.goalposts = el.g.append('g').classed('goalpoasts', true);
+
+        el.goalpostsLegend = el.g
+          .append('g')
+          .classed('goalpoasts-legend', true)
+          .attr(
+            'transform',
+            `translate(${this.width - 70},${this.options.margin.top})`
+          )
+          .call(goalPosts.legend, strategies, '#444');
+
+        strategies.forEach(strategy => {
+          const data = this.extras.data.filter(d => d.strategy === strategy);
+          el.goalposts
+            .selectAll('g')
+            .data(data)
+            .join('g')
+            .attr('transform', d => `translate(${this.xScale(d.date)},0)`)
+            .call(
+              goalPosts.generate,
+              dimension,
+              this.yScale,
+              goalPosts.colorScale(strategy)
+            );
+        });
+      }
+      //  INSERT TARGET GOALPOSTS END
 
       // add legend
       el.legend.selectAll('g').remove();

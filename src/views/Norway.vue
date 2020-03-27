@@ -10,26 +10,33 @@
       <article v-if="chart" class="mb-4">
         <h2
           v-if="chart.title"
-          class="text-sm uppercase text-sm tracking-wide text-gray-800 border-b-2 border-gray-500 mt-4"
+          class="text-sm uppercase text-sm tracking-wide text-gray-800 border-b-2 border-gray-500 mt-4 pl-4"
         >
           {{ chart.title }}
         </h2>
         <multi-line-chart
           id="fhi_scenario_chart"
           :series="chart.data"
-          :scenarios="scenarios"
+          :extras="extras"
           :y-scale-type="yScaleType"
           :config="chart.config"
         />
       </article>
     </div>
-    <p v-if="!isLoading" class="text-xs text-right pr-4">
+    <p v-if="!isLoading" class="text-xs ml-4">
       Kilde:
       <a
         class="underline"
         href="https://www.fhi.no/sv/smittsomme-sykdommer/corona/dags--og-ukerapporter/dags--og-ukerapporter-om-koronavirus/"
-      >
-        FHI </a
+        >FHI
+      </a>
+      <span v-if="feature === 'scenarios'">
+        /
+        <a
+          class="underline"
+          href="https://www.fhi.no/contentassets/c9e459cd7cc24991810a0d28d7803bd0/covid-19-epidemien-risiko-prognose-og-respons-i-norge-etter-uke-12.--24.mars-2020.pdf"
+          >FHIs Risikoprognose
+        </a></span
       >. Grafikk:
       <a class="underline" target="_parent" href="https://kartoteket.as">
         Kartoteket
@@ -49,7 +56,8 @@
 [] Create ICU bed charts
 */
 
-import * as d3 from 'd3'; // @todo cherrypick like this: var d3 = Object.assign({}, require("d3-format"), require("d3-geo"), require("d3-geo-projection"));
+// @todo cherrypick like this: var d3 = Object.assign({}, require("d3-format"), require("d3-geo"), require("d3-geo-projection"));
+import * as d3 from 'd3';
 
 import ScaleLoader from 'vue-spinner/src/PulseLoader.vue';
 import MultiLineChart from '@/components/charts/MultiLineChart';
@@ -61,62 +69,67 @@ export default {
     ScaleLoader
   },
   data() {
-    const scenarios = {
-      nothing: [
-        {
-          date: new Date('2020-03-28'),
-          hospital: { mean: 430, min: 360, max: 500 },
-          icu: { mean: 60, min: 45, max: 80 }
-        },
-        {
-          date: new Date('2020-04-04'),
-          hospital: { mean: 1070, min: 920, max: 1250 },
-          icu: { mean: 150, min: 110, max: 180 }
-        },
-        {
-          date: new Date('2020-04-11'),
-          hospital: { mean: 2700, min: 2340, max: 3060 },
-          icu: { mean: 380, min: 320, max: 440 }
-        }
-      ],
-      contain: [
-        {
-          date: new Date('2020-03-28'),
-          hospital: { mean: 280, min: 230, max: 340 },
-          icu: { mean: 55, min: 40, max: 70 }
-        },
-        {
-          date: new Date('2020-04-04'),
-          hospital: { mean: 390, min: 320, max: 460 },
-          icu: { mean: 90, min: 65, max: 110 }
-        },
-        {
-          date: new Date('2020-04-11'),
-          hospital: { mean: 510, min: 920, max: 1250 },
-          icu: { mean: 120, min: 95, max: 145 }
-        }
-      ],
-      supress: [
-        {
-          date: new Date('2020-03-28'),
-          hospital: { mean: 240, min: 200, max: 280 },
-          icu: { mean: 50, min: 35, max: 65 }
-        },
-        {
-          date: new Date('2020-04-04'),
-          hospital: { mean: 245, min: 190, max: 300 },
-          icu: { mean: 70, min: 50, max: 90 }
-        },
-        {
-          date: new Date('2020-04-11'),
-          hospital: { mean: 225, min: 170, max: 270 },
-          icu: { mean: 70, min: 50, max: 85 }
-        }
-      ]
-    };
+    // @todo: move to seperate file and require on demand
+    const scenarios = [
+      {
+        strategy: 'nothing',
+        date: new Date('2020-03-28'),
+        hospital: { mean: 430, min: 360, max: 500 },
+        icu: { mean: 60, min: 45, max: 80 }
+      },
+      {
+        strategy: 'nothing',
+        date: new Date('2020-04-04'),
+        hospital: { mean: 1070, min: 920, max: 1250 },
+        icu: { mean: 150, min: 110, max: 180 }
+      },
+      {
+        strategy: 'nothing',
+        date: new Date('2020-04-11'),
+        hospital: { mean: 2700, min: 2340, max: 3060 },
+        icu: { mean: 380, min: 320, max: 440 }
+      },
+      {
+        strategy: 'contain',
+        date: new Date('2020-03-28'),
+        hospital: { mean: 280, min: 230, max: 340 },
+        icu: { mean: 55, min: 40, max: 70 }
+      },
+      {
+        strategy: 'contain',
+        date: new Date('2020-04-04'),
+        hospital: { mean: 390, min: 320, max: 460 },
+        icu: { mean: 90, min: 65, max: 110 }
+      },
+      {
+        strategy: 'contain',
+        date: new Date('2020-04-11'),
+        hospital: { mean: 510, min: 420, max: 610 },
+        icu: { mean: 120, min: 95, max: 145 }
+      },
+      {
+        strategy: 'supress',
+        date: new Date('2020-03-28'),
+        hospital: { mean: 240, min: 200, max: 280 },
+        icu: { mean: 50, min: 35, max: 65 }
+      },
+      {
+        strategy: 'supress',
+        date: new Date('2020-04-04'),
+        hospital: { mean: 245, min: 190, max: 300 },
+        icu: { mean: 70, min: 50, max: 90 }
+      },
+      {
+        strategy: 'supress',
+        date: new Date('2020-04-11'),
+        hospital: { mean: 225, min: 170, max: 270 },
+        icu: { mean: 70, min: 50, max: 85 }
+      }
+    ];
     return {
       isLoading: true,
       input: [],
+      feature: null,
       scenarios,
       dimensions: ['total'],
       alllowedDimensions: [
@@ -129,16 +142,40 @@ export default {
         'mean_age',
         'female',
         'male'
-      ],
-      margin: {
-        right: 50,
-        left: 10,
-        top: 20,
-        bottom: 20
-      }
+      ]
     };
   },
   computed: {
+    extras() {
+      if (this.feature === 'scenarios') {
+        return { id: 'scenarios', data: this.scenarios };
+      }
+      return {};
+    },
+    margin() {
+      return {
+        right: this.feature === 'scenarios' ? 120 : 50,
+        left: 10,
+        top: 20,
+        bottom: 20
+      };
+    },
+    xDomain() {
+      if (this.feature === 'scenarios') {
+        // if showing icu in scenario-mode, lock X axis domain to set date range
+        if (this.dimensions[0] === 'icu' || this.dimensions[0] === 'hospital')
+          return [new Date('2020-03-12'), new Date('2020-04-20')];
+      }
+      return null;
+    },
+    yDomain() {
+      if (this.feature === 'scenarios') {
+        // if showing icu in scenario-mode, lock Y axis domain to set value range
+        if (this.dimensions[0] === 'icu') return [0, 500];
+        if (this.dimensions[0] === 'hospital') return [0, 3500];
+      }
+      return null;
+    },
     colorScale() {
       return d3.scaleOrdinal(d3.schemeDark2); // d3.schemeTableau10
     },
@@ -167,6 +204,10 @@ export default {
     }
     this.input = await this.fetchData();
 
+    // check for special features in query string
+    if (this.$route.query && this.$route.query.feature) {
+      this.feature = this.$route.query.feature;
+    }
     // done loading
     this.isLoading = false;
   },
@@ -186,33 +227,39 @@ export default {
       });
 
       // create serie with nam/values from set startDate
-      const cutoff = d3.min(firstCase);
-
+      let cutoff = d3.min(firstCase);
+      if (this.feature === 'scenarios') {
+        cutoff = new Date('2020-03-15');
+      }
       const output = dimensions.map((line, i) => {
         return {
+          id: line,
           name: this.printLabel(line),
           values: values[i].filter(
             d => d.date > cutoff.setDate(cutoff.getDate() - 1)
           )
         };
       });
-
       return output;
     },
 
     createChart(dimensions) {
+      const config = {
+        colorScale: this.colorScale,
+        textColor: '#444',
+        aspectRatio: 0.5,
+        yAxis: 'right',
+        curve: d3.curveLinear,
+        margin: this.margin
+      };
+
+      if (this.yDomain) config.domainY = this.yDomain;
+      if (this.xDomain) config.domainX = this.xDomain;
+
       return {
         title: `Norge`,
         data: this.getSeries(dimensions),
-        config: {
-          colorScale: this.colorScale,
-          textColor: '#444',
-          aspectRatio: 0.5,
-          yAxis: 'right',
-          curve: d3.curveLinear,
-          margin: this.margin
-          // domain: { y: [0, 440] }
-        }
+        config
       };
     },
     printLabel(token) {
@@ -220,7 +267,7 @@ export default {
         total: 'Registrert smittet (totalt)',
         new: 'Registrert smittet (nye)',
         hospital: 'Innlagt ',
-        icu: 'Intensivpost',
+        icu: 'Under intensivbehandling',
         deaths: 'Døde',
         tested: 'Testet (totalt)',
         mean_age: 'Gjennomsnittsalder (innlagte)',
