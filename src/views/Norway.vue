@@ -214,8 +214,10 @@ export default {
       });
 
       // create serie with nam/values from set startDate
-      const cutoff = d3.min(firstCase);
-
+      let cutoff = d3.min(firstCase);
+      if (this.feature === 'scenarios') {
+        cutoff = new Date('2020-03-15');
+      }
       const output = dimensions.map((line, i) => {
         return {
           id: line,
