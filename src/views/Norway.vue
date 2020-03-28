@@ -139,6 +139,7 @@ export default {
       isLoading: true,
       input: [],
       feature: null,
+      zoom: 1,
       scenarios,
       dimensions: ['total'],
       alllowedDimensions: [
@@ -184,9 +185,9 @@ export default {
     yDomain() {
       if (this.feature === 'scenarios') {
         // if showing icu in scenario-mode, lock Y axis domain to set value range
-        if (this.dimensions[0] === 'icu') return [0, 450];
-        if (this.dimensions[0] === 'hospital') return [0, 3500];
-        if (this.dimensions[0] === 'total') return [0, 112000];
+        if (this.dimensions[0] === 'icu') return [0, 450 / this.zoom];
+        if (this.dimensions[0] === 'hospital') return [0, 3500 / this.zoom];
+        if (this.dimensions[0] === 'total') return [0, 112000 / this.zoom];
       }
       return null;
     },
@@ -222,6 +223,10 @@ export default {
     if (this.$route.query && this.$route.query.feature) {
       this.feature = this.$route.query.feature;
     }
+    if (this.$route.query && this.$route.query.zoom) {
+      this.zoom = this.$route.query.zoom;
+    }
+
     // done loading
     this.isLoading = false;
   },
