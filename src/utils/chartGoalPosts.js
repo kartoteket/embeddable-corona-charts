@@ -67,12 +67,11 @@ const generate = (g, dimension, yScale, color) => {
 };
 
 const legend = (g, strategies, color) => {
-  const height = 40;
+  const height = 42;
   g.append('line')
     .attr('stroke', color)
     .style('stroke-opacity', 1)
     .attr('stroke-width', 1)
-    .attr('class', 'goalposts')
     .attr('x1', 0)
     .attr('y1', 0)
     .attr('x2', 0)
@@ -81,7 +80,6 @@ const legend = (g, strategies, color) => {
     .attr('stroke', color)
     .style('stroke-opacity', 1)
     .attr('stroke-width', 1)
-    .attr('class', 'goalposts')
     .attr('x1', -3)
     .attr('y1', 0)
     .attr('x2', 3)
@@ -90,7 +88,6 @@ const legend = (g, strategies, color) => {
     .attr('stroke', color)
     .style('stroke-opacity', 1)
     .attr('stroke-width', 1)
-    .attr('class', 'goalposts')
     .attr('x1', -3)
     .attr('y1', height)
     .attr('x2', 3)
@@ -100,25 +97,26 @@ const legend = (g, strategies, color) => {
     .attr('fill', color)
     .style('opacity', 0.75)
     .attr('stroke-width', 1)
-    .attr('class', 'goalposts')
     .attr('r', 2)
     .attr('cy', height / 2);
   g.append('text')
     .style('font-family', 'Helvetica, Arial, sans serif')
     .style('font-size', '9px')
     .style('fill', color)
-    .attr('x', 6)
+    .attr('x', -2)
     .attr('dy', 2)
-    .attr('y', 0)
-    .text('maks');
+    .attr('y', 10)
+    .attr('transform', 'rotate(90)')
+    .text('usikkerhets');
   g.append('text')
     .style('font-family', 'Helvetica, Arial, sans serif')
     .style('font-size', '9px')
     .style('fill', color)
     .attr('x', 6)
     .attr('dy', 2)
-    .attr('y', height)
-    .text('min');
+    .attr('y', 20)
+    .attr('transform', 'rotate(90)')
+    .text('intervall');
   g.append('text')
     .style('font-family', 'Helvetica, Arial, sans serif')
     .style('font-size', '9px')
@@ -131,7 +129,8 @@ const legend = (g, strategies, color) => {
   const colorLegends = g
     .selectAll('g')
     .data(strategies)
-    .join('g');
+    .join('g')
+    .attr('transform', 'translate(-20,0)');
 
   colorLegends
     .append('circle')

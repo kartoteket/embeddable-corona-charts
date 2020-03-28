@@ -12,6 +12,7 @@ const locale = d3.formatLocale({
 // extras
 // @todo move into instace scope
 let goalPosts = null;
+let thresholds = {};
 
 export default {
   props: {
@@ -133,6 +134,10 @@ export default {
     // if in scenarios-mode, load goalPosts-utils
     if (this.extras.id === 'scenarios') {
       goalPosts = require('@/utils/chartGoalPosts.js');
+      if (this.series[0].id === 'icu') {
+        // @todo: make this a config property "thresholds"
+        thresholds = require('@/utils/thresholdLines.js');
+      }
     }
 
     this.drawChart(`#chart-${this.id}`, this.series);
@@ -172,56 +177,51 @@ export default {
           .classed('goalpoasts-legend', true)
           .attr(
             'transform',
-            `translate(${this.width - 75},${this.options.margin.top})`
-          )
-          .call(goalPosts.legend, strategies, '#444');
+            `translate(${this.width - 60},${this.options.margin.top + 120})`
+          );
 
-        if (dimension === 'icu') {
-          // @todo: move to external file
+        el.goalpostsLegend
+          .append('text')
+          .style('font-family', 'Helvetica, Arial, sans serif')
+          .style('font-weight', 'bold')
+          .style('font-size', '9px')
+          .attr('x', -30)
+          .attr('y', -10)
+          .text('FHIs prognoser');
+
+        el.goalpostsLegend.call(goalPosts.legend, strategies, '#444');
+
+        if (thresholds.add) {
           el.thresholds = el.g.append('g').classed('ice-thresholds', true);
-          el.thresholds
-            .append('line')
-            .attr('stroke', '#000')
-            .style('stroke-opacity', 1)
-            .attr('stroke-width', 1)
-            .attr('stroke-dasharray', '4 4')
-            .attr('class', 'goalposts')
-            .attr('x1', 125)
-            .attr('y1', this.yScale(289))
-            .attr('x2', this.width - this.options.margin.right)
-            .attr('y2', this.yScale(289));
 
-          el.thresholds
-            .append('text')
-            .style('font-family', 'Helvetica, Arial, sans serif')
-            .style('font-size', '9px')
-            .style('fill', '#000')
-            .attr('x', 6)
-            .attr('dy', 2)
-            .attr('y', this.yScale(289))
-            .text('289 etablerte intensivplasser');
-
-          el.thresholds
-            .append('line')
-            .attr('stroke', '#000')
-            .style('stroke-opacity', 1)
-            .attr('stroke-width', 1)
-            .attr('stroke-dasharray', '4 4')
-            .attr('class', 'goalposts')
-            .attr('x1', 175)
-            .attr('y1', this.yScale(925))
-            .attr('x2', this.width - this.options.margin.right)
-            .attr('y2', this.yScale(925));
-
-          el.thresholds
-            .append('text')
-            .style('font-family', 'Helvetica, Arial, sans serif')
-            .style('font-size', '9px')
-            .style('fill', '#000')
-            .attr('x', 6)
-            .attr('dy', 2)
-            .attr('y', this.yScale(925))
-            .text('925 er maks antall mulige intensivplasser');
+          // ! Ad hoc extra fix for icu beds info
+          if (this.yScale.domain()[1] < 900) {
+            el.thresholds
+              .append('text')
+              .style('font-family', 'Helvetica, Arial, sans serif')
+              .style('font-size', '9px')
+              .style('fill', '#FF7F00')
+              .attr('x', this.width - this.options.margin.right + 10)
+              .attr('y', 20)
+              .selectAll('tspan')
+              .data(['↑ maks 925 mulige', 'intensivplasser'])
+              .join('tspan')
+              .attr('text-anchor', 'left')
+              .attr('x', this.width - this.options.margin.right + 10)
+              .attr('dy', (_, i) => `${i * 1.2}em`)
+              .text(d => d);
+          }
+          const th = [
+            [this.yScale(289), ['289 etablerte', 'intensivplasser']],
+            [this.yScale(925), ['925 maks mulige', 'intensivplasser']]
+          ];
+          th.forEach(threshold => {
+            el.thresholds.call(thresholds.add, threshold, {
+              x1: this.options.margin.left,
+              x2: this.width - this.options.margin.right,
+              xText: this.width - this.options.margin.right + 10
+            });
+          });
         }
         strategies.forEach(strategy => {
           const data = this.extras.data.filter(d => d.strategy === strategy);
@@ -246,7 +246,7 @@ export default {
         .attr(
           'transform',
           `translate(${this.options.margin.left + 10}, ${this.options.margin
-            .top + 50})`
+            .top + 10})`
         )
         .selectAll('g')
         .data(
