@@ -163,8 +163,8 @@ export default {
     },
     margin() {
       return {
-        right: this.feature === 'scenarios' ? 120 : 50,
-        left: 10,
+        right: this.feature === 'scenarios' ? 100 : 50,
+        left: 50,
         top: 20,
         bottom: 20
       };
@@ -184,14 +184,14 @@ export default {
     yDomain() {
       if (this.feature === 'scenarios') {
         // if showing icu in scenario-mode, lock Y axis domain to set value range
-        if (this.dimensions[0] === 'icu') return [0, 500];
+        if (this.dimensions[0] === 'icu') return [0, 450];
         if (this.dimensions[0] === 'hospital') return [0, 3500];
         if (this.dimensions[0] === 'total') return [0, 112000];
       }
       return null;
     },
     colorScale() {
-      return d3.scaleOrdinal(d3.schemeDark2); // d3.schemeTableau10
+      return d3.scaleOrdinal(d3.schemeSet2); // d3.schemeTableau10
     },
     chart() {
       return this.createChart(this.dimensions);
@@ -262,7 +262,7 @@ export default {
         colorScale: this.colorScale,
         textColor: '#444',
         aspectRatio: 0.5,
-        yAxis: 'right',
+        yAxis: 'left',
         curve: d3.curveLinear,
         margin: this.margin
       };
