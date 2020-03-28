@@ -18,3 +18,4 @@ date,total,new,hospital,icu,deaths,tested,mean_age,female,male,comment
 2020-03-25,2916,264,237,61,12,73089,47.7,46.8,53.2, 'Fra og med 25.03 hentes totalen fra MSIS'
 2020-03-26,3156,240,266,68,14,73892,47,48,52, 'Nye er utregnet som differanse fra dagen før pga endring til rapportering av prøvetakingsdato '
 2020-03-27,3581,424,302,81,16,78036,47,48,52,
+2020-03-27,3845,263,291,88,20,82584,48,48,52,
