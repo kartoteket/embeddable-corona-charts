@@ -140,7 +140,8 @@ export default {
     if (this.$route.params.slug) {
       const selection = this.$route.params.slug.split(',').map(d => {
         let output = d.trim().toLowerCase();
-        if (output === 'us') output = 'united states of america';
+        if (output === 'united states of america') output = 'united states';
+        if (output === 'us') output = 'united states';
         if (output === 'uk') output = 'united kingdom';
         if (output === 'taiwan*') output = 'taiwan';
         return output;
