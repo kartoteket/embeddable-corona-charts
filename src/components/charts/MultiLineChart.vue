@@ -132,11 +132,13 @@ export default {
 
   mounted() {
     // if in scenarios-mode, load goalPosts-utils
-    if (this.extras.id === 'scenarios') {
-      goalPosts = require('@/utils/chartGoalPosts.js');
-      if (this.series[0].id === 'icu') {
-        // @todo: make this a config property "thresholds"
-        thresholds = require('@/utils/thresholdLines.js');
+    if (this.extras) {
+      if (this.extras.id === 'scenarios') {
+        goalPosts = require('@/utils/chartGoalPosts.js');
+        if (this.series[0].id === 'icu') {
+          // @todo: make this a config property "thresholds"
+          thresholds = require('@/utils/thresholdLines.js');
+        }
       }
     }
 
@@ -167,7 +169,7 @@ export default {
       el.yAxis.call(this.yAxis, this.yScale);
 
       //  INSERT TARGET GOALPOSTS START
-      if (this.extras.id === 'scenarios' && goalPosts) {
+      if (this.extras && this.extras.id === 'scenarios' && goalPosts) {
         const dimension = this.series[0].id; // for now always only only one line
         const strategies = ['nothing', 'contain', 'supress'];
 
@@ -265,7 +267,7 @@ export default {
         .attr('width', 20)
         .attr('height', 2)
         .attr('rx', 2)
-        .attr('y', (_, i) => i * -16);
+        .attr('y', (_, i) => i * 16);
 
       legends
         .append('text')
@@ -274,7 +276,7 @@ export default {
         .style('fill', this.options.textColor)
         .attr('x', 25)
         .attr('dy', 4)
-        .attr('y', (_, i) => i * -16)
+        .attr('y', (_, i) => i * 16)
         .text(d => d.name);
 
       // el.lines.selectAll('path').remove();
