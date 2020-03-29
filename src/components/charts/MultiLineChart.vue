@@ -297,7 +297,9 @@ export default {
       el.yAxis
         .selectAll('.tick')
         .selectAll('line')
+        .attr('stroke-width', 0.33)
         .style('opacity', this.yScaleType === 'log' ? 0.1 : 0.15)
+        // .attr('stroke-dasharray', '3, 3')
         .attr('stroke', this.options.textColor);
 
       el.xAxis
@@ -305,18 +307,15 @@ export default {
         .selectAll('line')
         .style('opacity', 0.15)
         .attr('stroke', this.options.textColor);
-      el.xAxis
-        .selectAll('.tick')
+
+      el.g
+        .selectAll('.axis .tick')
         .selectAll('text')
+        .style('fill', this.options.textColor)
         .attr('y', '5');
 
-      el.xAxis
-        .selectAll('.domain')
-        .transition(t)
-        .style('opacity', 0.25);
-
-      el.yAxis
-        .selectAll('.domain')
+      el.g
+        .selectAll('.axis .domain')
         .transition(t)
         .style('opacity', 0.25);
 
@@ -350,10 +349,11 @@ export default {
             .tickFormat(d3.timeFormat('%d.%m'))
             .tickSizeOuter(0)
             .tickSizeInner(
-              (this.height -
-                this.options.margin.top -
-                this.options.margin.bottom) *
-                -1
+              5
+              //   (this.height -
+              //     this.options.margin.top -
+              //     this.options.margin.bottom) *
+              //     -1
             )
         );
     },
@@ -392,8 +392,8 @@ export default {
       const names = this.series.map(d => d.name);
 
       // flip as series are sorted ascending
-      names.reverse();
-      values.reverse();
+      // names.reverse();
+      // values.reverse();
 
       // trick to print date on first line
       names.unshift('Date');
@@ -439,8 +439,8 @@ export default {
         .join('line')
         .attr('stroke', this.options.textColor)
         .style('stroke-opacity', 0.5)
-        .attr('stroke-width', 1)
-        // .style('stroke-dasharray', '3, 3')
+        .attr('stroke-width', 0.5)
+        .style('stroke-dasharray', '1, 1')
         .attr('class', 'guide')
         .attr('x1', 0)
         .attr('y1', this.options.margin.bottom)
@@ -488,6 +488,11 @@ export default {
 };
 </script>
 <style>
+.axis text {
+  font-weight: 300;
+  opacity: 0.33;
+}
+
 .tooltip text,
 .legend text,
 .axis {
@@ -497,7 +502,7 @@ export default {
   .tooltip text,
   .legend text,
   .axis {
-    font-size: 0.75rem !important;
+    font-size: 0.7rem !important;
   }
 }
 @screen lg {
