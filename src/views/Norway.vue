@@ -196,8 +196,8 @@ export default {
       color
         .domain(['icu', 'hospital', 'deaths'])
         .range([
-          '#17becf',
           '#d62728',
+          '#17becf',
           '#7f7f7f',
           '#1f77b4',
           '#ff7f0e',
