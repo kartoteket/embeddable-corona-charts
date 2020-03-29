@@ -224,6 +224,7 @@ export default {
       const cuttoff = d3.min(firstCase);
       const output = selection.map((country, i) => {
         return {
+          id: country,
           name: this.printCountryName(country),
           values: values[i].filter(d => d.date > cuttoff)
         };
