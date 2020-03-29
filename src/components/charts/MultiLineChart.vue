@@ -263,7 +263,7 @@ export default {
 
       legends
         .append('rect')
-        .attr('fill', d => this.color(d.name))
+        .attr('fill', d => this.color(d.id))
         .attr('width', 20)
         .attr('height', 2)
         .attr('rx', 2)
@@ -289,7 +289,7 @@ export default {
         .selectAll('path')
         .data(series)
         .join('path')
-        .attr('stroke', d => this.color(d.name))
+        .attr('stroke', d => this.color(d.id))
         .transition(t)
         .attr('d', d => this.changeLine(d.values));
 
@@ -392,8 +392,8 @@ export default {
       const names = this.series.map(d => d.name);
 
       // flip as series are sorted ascending
-      // names.reverse();
-      // values.reverse();
+      names.reverse();
+      values.reverse();
 
       // trick to print date on first line
       names.unshift('Date');
