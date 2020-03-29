@@ -192,7 +192,22 @@ export default {
       return null;
     },
     colorScale() {
-      return d3.scaleOrdinal(d3.schemeSet2); // d3.schemeTableau10
+      const color = d3.scaleOrdinal();
+      color
+        .domain(['icu', 'hospital', 'deaths'])
+        .range([
+          '#17becf',
+          '#d62728',
+          '#7f7f7f',
+          '#1f77b4',
+          '#ff7f0e',
+          '#2ca02c',
+          '#9467bd',
+          '#8c564b',
+          '#e377c2',
+          '#bcbd22'
+        ]);
+      return color;
     },
     chart() {
       return this.createChart(this.dimensions);
