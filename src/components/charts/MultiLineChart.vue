@@ -253,7 +253,7 @@ export default {
         .selectAll('g')
         .data(
           series.sort((a, b) =>
-            d3.ascending(
+            d3.descending(
               a.values[a.values.length - 1].value,
               b.values[b.values.length - 1].value
             )
@@ -392,8 +392,8 @@ export default {
       const names = this.series.map(d => d.name);
 
       // flip as series are sorted ascending
-      names.reverse();
-      values.reverse();
+      // names.reverse();
+      // values.reverse();
 
       // trick to print date on first line
       names.unshift('Date');
