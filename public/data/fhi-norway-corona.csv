@@ -21,3 +21,4 @@ date,total,new,hospital,icu,deaths,tested,mean_age,female,male,comment
 2020-03-28,3845,263,291,88,20,82584,48,48,52,
 2020-03-29,4102,257,317,94,22,85136,48,48,52,
 2020-03-30,4226,124,321,104,26,87191,48,49,51
+2020-03-31,4447,222,319,107,28,90242,48,49,51, 'Tall på innlagte er hentet fra VG for helsedirs data ikke er tilgjengelig'
