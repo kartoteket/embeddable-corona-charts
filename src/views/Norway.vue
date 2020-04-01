@@ -26,6 +26,7 @@
     <p v-if="!isLoading" class="text-xs ml-4">
       Kilde:
       <a
+        target="_parent"
         class="underline"
         href="https://www.fhi.no/sv/smittsomme-sykdommer/corona/dags--og-ukerapporter/dags--og-ukerapporter-om-koronavirus/"
         >FHI
@@ -33,6 +34,7 @@
       <span v-if="feature === 'scenarios'">
         /
         <a
+          target="_parent"
           class="underline"
           href="https://www.fhi.no/contentassets/c9e459cd7cc24991810a0d28d7803bd0/covid-19-epidemien-risiko-prognose-og-respons-i-norge-etter-uke-12.--24.mars-2020.pdf"
           >FHIs Risikoprognose
