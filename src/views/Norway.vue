@@ -51,9 +51,9 @@
 /*
 [X] get dimension(s) from URL parameter
   [x] Update scales to work
-  => [] publish version
-[ ] create mode for showtarget=true to include targets
-  => [ ] publish new version
+  => [X publish version
+[X] create mode for showtarget=true to include targets
+  => [X] publish new version
 
 [] Create ICU bed charts
 */
