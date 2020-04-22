@@ -179,8 +179,11 @@ export default {
           this.dimensions[0] === 'icu' ||
           this.dimensions[0] === 'hospital' ||
           this.dimensions[0] === 'total'
-        )
-          return [new Date('2020-03-12'), new Date('2020-04-20')];
+        ) {
+          const end = new Date();
+          end.setDate(end.getDate() + 3); // 3 days from today
+          return [new Date('2020-03-12'), end];
+        }
       }
       return null;
     },
