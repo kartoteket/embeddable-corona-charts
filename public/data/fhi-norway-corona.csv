@@ -49,3 +49,5 @@ date,total,new,hospital,icu,deaths,tested,mean_age,female,male,comment
 2020-04-25,7467,59,114,50,193,155125,47,51,49, 'Mangler dagsrapport - flere kilder'
 2020-04-26,7505,38,122,49,193,155125,47,51,49, 'Mangler dagsrapport - flere kilder'
 2020-04-27,7533,28,125,55,193,164316,47,51,49,
+2020-04-28,7605,72,119,53,195,165951,47,51,49,
+2020-04-29,7667,62,114,49,202,169124,47,51,49,
