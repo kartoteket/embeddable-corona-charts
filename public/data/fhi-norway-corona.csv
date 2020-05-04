@@ -52,3 +52,7 @@ date,total,new,hospital,icu,deaths,tested,mean_age,female,male,comment
 2020-04-28,7605,72,119,53,195,165951,47,51,49,
 2020-04-29,7667,62,114,49,202,169124,47,51,49,
 2020-04-30,7710,43,99,47,204,172586,47,51,49,
+2020-05-01,7791,27,82,null,null,null,null,null,null, 'Ingen rapporter i helgene'
+2020-05-02,7809,18,81,null,208,null,null,null,null,
+2020-05-03,7836,11,80,null,208,null,null,null,null,
+2020-05-04,7847,38,82,37,208,182285,46,50,50,
