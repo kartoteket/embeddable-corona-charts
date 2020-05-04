@@ -157,6 +157,7 @@ export default {
           .attr('viewBox', `0 0 ${this.width} ${this.height}`)
           .attr('style', 'width:100%');
         el.g = svg.append('g');
+        el.gapLines = el.g.append('g').classed('gapLines', true);
         el.lines = el.g.append('g').classed('lines', true);
         el.xAxis = el.g.append('g').classed('axis  axis-x', true);
         el.yAxis = el.g.append('g').classed('axis axis-y', true);
@@ -278,6 +279,29 @@ export default {
         .attr('dy', 4)
         .attr('y', (_, i) => i * 16)
         .text(d => d.name);
+
+      // missing data / gapLine creates complete data series
+      // used to draw dotted interpolated lines between
+      // data points where data is missing
+
+      // we have to deep clone each object to preserve the original series array
+      const seriesCopy = series.map(o => ({ ...o }));
+      const missingData = seriesCopy.map(s => {
+        s.values = s.values.filter(this.changeLine.defined()); // ref: https://observablehq.com/@d3/line-with-missing-data
+        return s;
+      });
+      el.gapLines
+        .attr('fill', 'none')
+        .attr('stroke-width', 1)
+        .attr('stroke-dasharray', '2, 2')
+        .attr('stroke-linejoin', 'round')
+        .attr('stroke-linecap', 'round')
+        .selectAll('path')
+        .data(missingData)
+        .join('path')
+        .attr('stroke', '#ddd')
+        .transition(t)
+        .attr('d', d => this.changeLine(d.values));
 
       // el.lines.selectAll('path').remove();
       el.lines
