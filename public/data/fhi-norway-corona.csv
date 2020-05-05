@@ -56,3 +56,4 @@ date,total,new,hospital,icu,deaths,tested,mean_age,female,male,comment
 2020-05-02,7809,18,81,null,208,null,null,null,null,
 2020-05-03,7836,11,80,null,208,null,null,null,null,
 2020-05-04,7847,38,82,37,208,182285,46,50,50,
+2020-05-05,7903,59,71,35,209,189657,46,50,50,
