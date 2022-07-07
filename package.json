@@ -11,7 +11,7 @@
     "array-flat-polyfill": "^1.0.1",
     "core-js": "^3.6.4",
     "d3": "^5.15.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "topojson-client": "^3.1.0",
     "vue": "^2.6.11",
     "vue-gtag": "^1.6.2",
